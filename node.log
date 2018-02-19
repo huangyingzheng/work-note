@@ -1,0 +1,132 @@
+js 的运行环境，运行在浏览器的内核中的js引擎。
+浏览器的功能：
+1.	请求一个http地址（封装一个请求报文）； 浏览器最大的作用就是将url地址封装成一个请求报文，解析响应报文。
+2.	解析服务器给回来的响应报文（内容可能不一样）渲染html css image， 执行js脚本 ；前面都是渲染引擎，后面是解析引擎
+Js可以做什么，
+-  对dom的增加删除改变
+-	Ajax/跨域
+-	Bom
+-	Esmas
+
+Js不能做什么：
+-	无法进行文件操作 文件和文件夹的create read update delete
+-	没有办法操作系统信息
+-	由于运行环境特殊（避免访问一个网页个人信息被窃取了）
+
+全局对象
+-	Global :相当于window 在浏览器，所有对象在里面都可以取得到。
+-	Process :获取与node进程相关的信息。（there are description of stability, 0,1,2 ; 0 means deprecated不赞成 ）进程：正在执行的程序文件。
+Process.stdout 相当于输出，系统输出。
+新的输出去符`` 在里面可以直接接入模板字符串`${msg} world` ;模板字符串的意思是$后面+{msg} ; 这种新的``不受换行符号干扰，也就是说我们可以在里面随意的加入回车。
+Process.avg 的属性是数组，也就是array[]，可以在后面加入新的元素定义为avg[2]，因为前两个是路径和文件名。
+
+js在一个函数里面执行另一个函数有两种情况，第一种是将子函数作为一个参数交由母函数调用。第二种情况是，第二个函数作为实例化对象，第一个函数中存有第二个函数的通用函数并且
+向第二个函数传递参数，04.js。第二种情况适用于异步操作，换句话说主函数的操作周期过长，为了避免等待，我们将他放到最后去执行，单线程，但是执行完成之后我们需要一个提醒，也
+就是callback函数，主函数向callback函数传递参数，可能是结果，交由callback返回请求。
+
+$(document).ready(function(){
+
+//JS中关于把函数作为函数的参数来传递的问题的小总结
+//第一，最简单的形式无参函数，直接形式函数的函数名放到括号中，再在执行部分这个函数即可。
+//当然调用另一个真正的定义好的函数
+/*
+function test1(Func)
+{
+　　Func();
+}
+function test2()
+{
+　　alert("我是test2");
+}
+test1(test2);
+*/
+
+
+//第二种，带参数的普通调用法。跟第一种唯一的区别就是在定义主函数的执行语句里调用参数函数时该把参数加上
+/*
+function test1(Func)
+{
+　　Func(mydata);
+}
+function test3(data)
+{
+　　alert(data);
+}
+
+test1(test3("zhangran"));
+*/
+
+
+//这一种，其实也很简单，就是把第二中的引用的函数不在单独定义而是作为调用主函数时，
+//里面的参数时生成，这里是个匿名的函数,这种形式在js的jquery中应用的比较常见
+
+/*
+function test1(Func)
+{
+　　Func("hello");
+}
+
+test1(function(data)
+{
+　　alert(data);
+});
+
+*/
+
+ 
+
+//总结
+//test函数的定义，两个参数，a，b
+/*
+function test( a, b ){ 
+　　a+=1; 
+　　alert( b(a)); 
+} 
+//test函数的执行第二个参数传递的为一个函数
+test(3, function(result){ 
+　　return result; 
+});
+*/
+
+});
+
+异步（单线程）：
+如果函数需要回调参数，一定是在参数的最后。
+function getFileAsync(path,callback){
+if (错误){callback （错误）}
+}
+else{callback};
+}
+错误优先的回调函数
+
+单线程特点，一个代码阻塞，后面的代码无法执行。
+node进程启动之后会默认创建一个线程，线程用于执行代码。 main thread（）,遇到问题就交给任务队列，主线程只执行简单的程序，将任务交给event loop， eventloop 会自动分配线程
+去完成，执行回调函数。当主线程所有的任务完成之后，他会检查任务队列，看看有没有新的事件（一个任务在线程中完成之后他会在任务队列中生成一个事件，主线程会将这些事件从任务队列
+中提取出来在主线程上执行）。每一次调用一次event loop就是一件event， Process.nextTick 会在这次事件的末尾执行，而setTimeout(fn,0)和 setimmadiate 会将事件放在下一个事
+件的开头，setinterval机制和setTimeout一样。然后一般来说callback都是属于下一事件。同层次的callback在同一事件中执行。process.nextTick 属于例外。
+
+settimeout(fn,time) 其中的fn的意义只是用于执行这一段代码，并不需要在别的地方调用，所以一般可以用（）=>来写
+
+然后就是promise 这个东西相当于一个构造函数， 在框架里面执行，new promise(function(resovle,reject){???}),只要结果是resolve 或者是reject就行。然后会传递出一个promise
+对象，里面有参数，可以用 promise.then（）来执行里面的参数，可能是console。log 也可能是将指针直到别的地方，开始下一个promise之类的。promise的状态一个发生无法更改，同时
+在asyno 方程里面我们还可以用await 来代替。then（）操作。 我们可以 let result = await function（）； reject 抛出的都是error可以用watch捕获。
+var sleep = function (time) {
+    return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+            // 模拟出错了，返回 ‘error’
+            reject('error');
+        }, time);
+    })
+};
+
+var start = async function () {
+    try {
+        console.log('start');
+        await sleep(3000); // 这里得到了一个返回错误
+        
+        // 所以以下代码不会被执行了
+        console.log('end');
+    } catch (err) {
+        console.log(err); // 这里捕捉到错误 `error`
+    }
+};
