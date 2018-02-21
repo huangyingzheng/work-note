@@ -1,6 +1,7 @@
 const _ = require("lodash");
 
-const pathRegexp = /(.+?)[.]/;
+const pathRegexp = /(.+?)[.]/;//https://regexper.com 正则表达+？ 表示一个， +是一到正无穷，？是零到一，所以+？是一， ‘.’代表一个字符，（）里面
+//是要保存的内容，[.]指的是一个点字符，或许可以用\.代替，没试过；
 
 const pushAll = function(array, objects) {
     array.push.apply(array, objects);
