@@ -4,48 +4,50 @@ const pathRegexp = /(.+?)[.]/;//https://regexper.com 正则表达+？ 表示一�
 //是要保存的内容，[.]指的是一个点字符，或许可以用\.代替，没试过；
 
 const pushAll = function(array, objects) {
-    array.push.apply(array, objects);
+    array.push.apply(array, objects); //Inheritance methods
 };
 
-const getNextKV = function(object, path) {
-    const kv = {k: null, v: null};
+const getNextKV = function(object, path) { //键值对
+    const kv = {k: null, v: null};// 建立一个空的obj
 
-    const match = pathRegexp.exec(path);
+    const match = pathRegexp.exec(path);//创建一个匹配obj将符合的放入
 
-    if(match) {
-        kv.k = path.replace(pathRegexp, "");
-        kv.pk = match[1];
-        kv.v = object[match[1]];
+    if(match)//如果物件不为空
+    {
+        kv.k = path.replace(pathRegexp, "");//将地址后面部分推入k abc.ced => ['ced']
+        kv.pk = match[1];//建立新的属性 前k为正则 'abc'
+        kv.v = object[match[1]];//对应该键obj的值
     }
     else {
-        kv.v = object[path];
+        kv.v = object[path];//如果没有就将path作为新的键存入数据库
     }
     return kv;
 };
 
 const goTo = function(object, path) {
-    if(! _.isString(path)) throw new Error("Path doit être une string");
+    if(! _.isString(path)) throw new Error("Path doit être une string");//obj里面的属性这个
+    //必须是字符串
 
-    let r;
-    if(_.isPlainObject(object)) {
-        let newPath = path;
+    let r;//创建变量r
+    if(_.isPlainObject(object)) {//如果obj是标准的obj
+        let newPath = path;// 建立一些新的东西
         let path2;
         let match;
         let o;
         do {
-            match = pathRegexp.exec(newPath);
-            newPath = newPath.replace(pathRegexp, "");
+            match = pathRegexp.exec(newPath);//建立匹配数组 match
+            newPath = newPath.replace(pathRegexp, "");// 将匹配片段玻璃
 
-            if(match) {
-                path2 = (path2 ? path2 + "." : "") + match[1];
-                o = object[path2];
+            if(match) {// 如果存在匹配片段 有相同的属性
+                path2 = (path2 ? path2 + "." : "") + match[1];//path2真假性判断 得到属性标签
+                o = object[path2];// 物件中标签属性的物件
 
-                if(o !== undefined) {
-                    r = goTo(o, newPath);
+                if(o !== undefined) {// 如果去得到
+                    r = goTo(o, newPath);//去到指定的位置
                 }
             }
             else {
-                r = object[path];
+                r = object[path];//无效标签直接返回
             }
         }
         while(match && o === undefined);
@@ -55,14 +57,15 @@ const goTo = function(object, path) {
 };
 
 const goToAll = function(object, path, lastArray) {
-    const r = [];
+    const r = [];//假设一个数组r
 
     if((! path) && (! lastArray)) {
         r.push(object);
-    }
-    else if(_.isPlainObject(object)) {
+    }// 如果路径和最后一个数组其中一个出错向r推送obj
+    else if(_.isPlainObject(object)) {//如果obj被定义
         const kv = getNextKV(object, path);
         pushAll(r, goToAll(kv.v, kv.k));
+
 
     }
     else if(_.isArray(object)) {
@@ -74,7 +77,6 @@ const goToAll = function(object, path, lastArray) {
 
     return r;
 };
-
 const forceMap = function(value, execute, forceArrayOutput) {
     if(! execute) execute = _.identity;
     return _.isArray(value) ?
