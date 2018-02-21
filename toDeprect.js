@@ -122,3 +122,163 @@ module.exports = {
     goToAll,
     sum
 };
+const toDeprect= require('./toDeprect')
+const _ = require("lodash");
+
+describe('filterFields', () => {
+    test('sum numbers', () => {
+
+
+        expect(
+            toDeprect.sum(1, 2)
+        ).toEqual(
+            3
+        )
+    })
+
+})
+// describe('goTo', () => {
+//     it('basic', () => {
+//         const object = {
+//             a: { a1: 1, a2: 2 , a3:'value', a4:[1]},
+//             b: { b1: 3, b2: 4 },
+//             d:'12'
+//
+//         };
+//          const path = 'd';
+//         // const c=[12];
+//
+//
+//
+//         const getOnB = toDeprect.goTo(object, 'b.b2')
+//         // const getOnC =  3
+//         // const getOnC =  toDeprect.goTo(object,c)
+//         const getOnD =  toDeprect.goTo(object,'d')
+//         // const getOnA3 =  toDeprect.goTo(object,'a.a6')
+//
+//
+//         expect(getOnB).toEqual(4)// number => string ok
+//         expect(
+//             toDeprect.goTo(object,path)
+//         ).toEqual('12')// string not ok??
+//         expect(()=>getOnD()).toThrow(Error)// string not ok
+//         expect(()=> {
+//             return toDeprect.goTo(object,path)
+//         }).toThrow(Error)//question
+//         expect(()=>getOnB()).toThrow(Error)//question??
+//
+//
+//         // expect(()=>getOnA2()).toThrow(Error)
+//         // expect(()=>getOnA3()).toThrow(Error)
+//
+//     })
+// })
+    global.describe ('goTo',()=>{
+    const object ={
+        a: { a1: 1, a2: 2 },
+        b: { b1: '12', b2: 4 },
+        c: [{c1:1},{c2:2}],
+        d: 12
+    };
+    // const getToD = toDeprect.goTo(object,'d')
+    // test ('basic',()=>
+    // {
+    //     expect(getToD).toEqual(12);
+    // })
+    //     var s = 'a.a1';
+    //     var s = toString(object['d'])
+    const getToD = toDeprect.goTo(object,'d')
+    test ('basic_1',()=>
+    {
+        expect(getToD).toEqual(12);
+    })
+    // const getToB = toDeprect.goTo(object,'')
+})
+
+global.describe('filerFields', () => {
+    it('keep property', () => {
+        const object = {
+            a: '1',
+            bababa: '2',
+            c: '3'
+        }
+        const paths = ['a','bababa', 'g']
+        const t1 = toDeprect.filterFields(object,paths)
+
+        expect(t1).toEqual({
+            a: '1',
+            bababa: '2'
+        })
+
+        expect(t1).not.toHaveProperty('c');
+    })
+
+    it('recursive on children objects',() => {
+        const object = {
+            a: {
+                b: 1,
+                c: 2
+            },
+            d:3
+        }
+        const paths = ['a.b', 'd']
+        const t1 = toDeprect.filterFields(object,paths)
+
+        expect(t1).toEqual({
+            a: { b: 1 },
+            d: 3
+        })
+    })
+
+    it('recursive on array',() => {
+        const object = {
+            a: [
+                {b: 3, c: 4},
+                {b: 5, c: 6}
+            ]
+        }
+        const paths = ['a.b']
+        const t1 = toDeprect.filterFields(object,paths)
+
+        expect(t1).toEqual({
+            a: [
+                { b: 3 },
+                { b: 5 }
+            ]
+        })
+    })
+
+    it('missing children objects',() => {
+        const object = {
+            a: null,
+            d:3
+        }
+        const paths = ['a.b', 'd']
+        const t1 = toDeprect.filterFields(object,paths)
+
+        expect(t1).toEqual({
+            a: null,
+            d: 3
+        })
+    })
+
+    it('clone on children object',() => {
+        const object = {
+            a: {
+                b: 1,
+                c: 2
+            },
+            d:3
+        }
+        const paths = ['a']
+        const t1 = toDeprect.filterFields(object,paths)
+
+        expect(t1).toEqual({
+            a: {
+                b: 1,
+                c: 2
+            }
+        })
+        expect(t1.a).not.toBe(object.a);
+    })
+})
