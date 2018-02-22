@@ -1,0 +1,36 @@
+在esc之后版本的js里面我们不用var定义函数了，我们用const 和 let
+这样就出现了一个问题， 怎么去定义undefinded
+这里有两种方式，第一种就是 const x = undefinded 这里的undefinded是一个内置的类， 可以直接调用。
+但是如果直接调用const 的话是不行的，比如const x; 但凡const 被调用他相当于产生了一个obj，只要是obj就是被定义的。
+另一种方法是let x;这是js里面对于变量的声明。 此时let x是undefinded的。
+就此，我们引出了一个问题，就是比如我们有一个方程：
+function ttest (x){return f(x)}
+undefined
+此时这个方程返回的结果是undefinded因为第二个方程我们没有定义，因为没有对第二个方程进行定义，所以他的类型就是var 或者是let。
+function ttest (x){return f(x)}
+undefined
+ttest()
+undefined
+ttest(x)
+undefined
+这个时候我们对第二个函数进行定义：
+f = () => "huang"
+() => "huang"
+ttest()
+"huang"
+这就意味着我们可以在外部环境改变内部的函数，
+再试一次,这次的重定向带入参数：
+f =(x) => {return x}
+(x) => {return x}
+ttest(10)
+10
+所以我们定义函数的时候为了防止外部更改要用const 来定义：
+const ff = (x) => {return x}
+undefined
+function ttest(x) {return ff(x)}
+undefined
+ttest(10)
+10
+这样才是合理的， 
+另外说一下 const f =() =>{} 直接实例化一个匿名函数
+或者 function f(){}; const ff = f; 实例化一个标准函数。 目前看来两者作用差不多。
