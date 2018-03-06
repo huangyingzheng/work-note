@@ -1,0 +1,10 @@
+网上看了阮一峰的文章，有点思路了。
+function timeout(ms) {
+    return new Promise((resolve, reject) => {
+        setTimeout(resolve, ms,123456);
+});
+}
+
+timeout(100).then((value) => {
+    console.log(value);
+}); // 123456 promise 也是可以传递函数的，但是位置要写对。
