@@ -8,3 +8,18 @@ function timeout(ms) {
 timeout(100).then((value) => {
     console.log(value);
 }); // 123456 promise 也是可以传递函数的，但是位置要写对。
+趁着距离下班还有点时间,我写一下我对promise的理解.
+首先什么是promise,他可以说是一个对象,一个很特殊的对象,他有两个参数,分别是resolve和reject.当我们需要用promise的时候,可以调用他的构造器.
+然后指定成功方法和失败方法,然后他就会根据条件执行. 有一点要注意的是,promise后面可以用then连接一个新的then,因为then返回的也是一个promise,最后我们要
+用catch捕获错误,还有解释then不仅仅能够传递promise的结果,还能传递出结果的参数,举个例子:
+cont promise = new Promise(resolve,reject){
+    resolve(3)
+};
+promise.then(val=> {console.log(val)})// 3
+大概就是这样,可以将成功后执行的结果作为parametres传递到下一个then.但是也只能传递一个,如果要传递多个或者说是保存变量,原生promise不好实现,他提供了
+promise.all函数,可以勉强实现传递多个值.但是保存变量就做不到了,因为作用域不同,想要实现只能用嵌套函数,嵌套的像个金字塔一样,可读性太差了,那样和回调函数
+就一样了.所以在ecmas 2017 引入了一个新的处理异步的方法,叫做async/await.
+await 的作用域只能在async,因为await可以回调异步的结果,相当于指定了异步函数的执行顺序,而且所有的异步函数在同一个作用于,很方便捕获错误,在aysnc的方程
+里面我们同样可以些同步方程,不影响.我个人理解他的执行机制还是一样的,先执行同步的方法,之后在执行异步的方法,并且可以保存异步的结果,进行调用.还有aynsc调用
+之前先要require('aysnc')不知道有没有拼错,然后才能使用不然就是报错.await可以和try catch一起使用.
+大概就是这样,async/await很好用,甩开原生的promise几条街,虽然promise是在15年提出来的.
