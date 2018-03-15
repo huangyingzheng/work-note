@@ -1,0 +1,25 @@
+今天在写测试文件，发现一些问题值得说一下，但是我也不是特别明白。
+我需要对一些undefined的情况处理，在同步的情况下我们通常是建立一个异常实例，然后用throw抛出异常。
+但是在异步中我们不能这么用，特别是但你在使用async/await的情况下不能这么使用，否则jest的异步检测识别不了，
+他就报错，但是他的报错很奇怪（至少我觉得很奇怪，他没有任何描述，只是将他执行不了的地方指出来）。后面跟着报错的源文件行数。
+当我们遇到要抛出的异端怎么办呢，我给出的答案是用promise构造器定义一个reject的对象，然后用catch回收。
+上代码：
+try {
+        if(result.step === undefined){
+                // throw new Error('no record') 不行
+                return await new Promise(function(resolve,reject){
+                    reject('no record');
+                })
+     }
+catch（err）{
+  return err;
+}
+
+测试代码：
+it('there arent any step', async () => {  //
+            const a = new Alert(new Date());
+            const initialise = await a.initialise();
+            initialise.step = undefined;
+            const step = await a.nextStep(initialise);
+            expect(step).toBe('no record');
+    });
