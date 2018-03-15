@@ -1,0 +1,19 @@
+今天在写测试代码，然后被卡住了。但是关于promise有一些新的心得。
+首先，一定要记住promise是一个物件，我们用Promise定义的物件。然后就是Promise。
+直接上代码：
+var sleep = function (time) {
+    return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+            // 返回 ‘ok’
+            resolve('ok');
+        }, time);
+    })
+};
+在这里首先是定义一个名字叫sleep的函数，他有一个参数名字叫time。
+然后指向promise构造器，这个构造器一共有两个参数（也可以理解为里面的两个方法），一个名字叫resolve,一个交reject作用是改变promise的状态，
+因为promise的初始态是pending，在这个时候promise已经产生了，只是说是空的。
+接着我们可以看到这是一个关于setTimeout函数的promise，这是一个异步函数，promise就是他的执行结果，也就是回调函数的结果。
+所以我们可以在他的回调函数里面使用resolve或者reject方法改变promise的状态。
+因为莪promise是在外面定义的，所以我们可以将setTimeout看作是promise的回调函数。
+所以当函数sleep执行的时候我们是可以去得到promise对象的。
+执行的时候我们现得到一个pending状态的promise对象，然后执行promise里面的函数直到得到一个确定状态的promise对象，返回对象，函数结束。
